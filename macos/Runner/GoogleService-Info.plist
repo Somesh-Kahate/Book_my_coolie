@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>394426434833-hbs90fdrrp6a9jq9e4qsm8m0u56qp9fo.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.394426434833-hbs90fdrrp6a9jq9e4qsm8m0u56qp9fo</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>394426434833-7v3gaur9rcf95tkrd9lu3c1kfnspfedp.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBCqbO9-EwuKwnk2kK9MUL8_CRh1ZBEyPs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>394426434833</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.coolie</string>
+	<key>PROJECT_ID</key>
+	<string>book-my-coolie</string>
+	<key>STORAGE_BUCKET</key>
+	<string>book-my-coolie.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:394426434833:ios:efd5d5df8e44be7b4938b0</string>
+</dict>
+</plist>

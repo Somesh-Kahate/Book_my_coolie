@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "394426434833",
+    "project_id": "book-my-coolie",
+    "storage_bucket": "book-my-coolie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394426434833:android:9527dda65dcfde304938b0",
+        "android_client_info": {
+          "package_name": "com.example.coolie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "394426434833-7v3gaur9rcf95tkrd9lu3c1kfnspfedp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.coolie",
+            "certificate_hash": "02e5df7793d7ede4b4be1c70f4fea51e53b2f8ff"
+          }
+        },
+        {
+          "client_id": "394426434833-qgvkkhhfnuvjatvhf11r1pi1i8in1tko.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvDp03gdJJUd05cNkiQUSO17LiFcVZBVg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "394426434833-qgvkkhhfnuvjatvhf11r1pi1i8in1tko.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "394426434833-hbs90fdrrp6a9jq9e4qsm8m0u56qp9fo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.coolie"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
