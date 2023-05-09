@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coolie/global.dart';
 import 'package:coolie/user/login.dart';
 import 'package:coolie/user/user(home).dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -110,9 +111,9 @@ class _user_rState extends State<user_r> with SingleTickerProviderStateMixin {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text(
+              TranslatedText(
                 'User SignUp',
-                style: TextStyle(
+                TextStyle(
                     fontFamily: 'Satisfy',
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -333,7 +334,7 @@ class _user_rState extends State<user_r> with SingleTickerProviderStateMixin {
                                     .collection('users')
                                     .add({
                                   'Name': _nameController.text,
-                                  'Mob.No': _mobileNoController.text,
+                                  'Mobile': _mobileNoController.text,
                                 });
                                 print("Account created");
                                 Navigator.push(
@@ -344,7 +345,7 @@ class _user_rState extends State<user_r> with SingleTickerProviderStateMixin {
                                 print("Error ${error.toString()}");
                               });
                             },
-                            child: Text('Sign Up'),
+                            child: TranslatedText('Sign Up'),
                             style: ButtonStyle(
                               backgroundColor:
                                   MaterialStateProperty.all(Colors.black),

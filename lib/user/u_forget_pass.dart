@@ -1,3 +1,4 @@
+import 'package:coolie/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -71,7 +72,7 @@ class _u_forget_passState extends State<u_forget_pass> {
                       print(e);
                     }
                   },
-                  child: const Text('Forgot'),
+                  child: TranslatedText('Forgot'),
                 ),
               ),
             ],

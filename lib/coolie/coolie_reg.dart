@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coolie/coolie/coolie_login.dart';
+import 'package:coolie/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -103,9 +104,9 @@ class _CoolieRState extends State<CoolieR> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Text(
+            TranslatedText(
               'Coolie SignUp',
-              style: TextStyle(
+              TextStyle(
                   fontFamily: 'Satisfy',
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -132,9 +133,9 @@ class _CoolieRState extends State<CoolieR> {
                       //       items: items.map((String items) {
                       //         return DropdownMenuItem(
                       //           value: items,
-                      //           child: Text(
+                      //           child: TranslatedText(
                       //             items,
-                      //             style: TextStyle(color: Colors.black),
+                      //               TextStyle(color: Colors.black),
                       //           ),
                       //         );
                       //       }).toList(),
@@ -299,7 +300,7 @@ class _CoolieRState extends State<CoolieR> {
                                   .collection('coolie')
                                   .add({
                                 'Name': _nameController.text,
-                                'Mob.No': _mobileNoController.text,
+                                'Mobile': _mobileNoController.text,
                                 'station': _stationnameController.text
                               });
                               print("Account created");
@@ -318,7 +319,7 @@ class _CoolieRState extends State<CoolieR> {
                             //   "station": _stationnameController
                             // });
                           },
-                          child: Text('Sign Up'),
+                          child: TranslatedText('Sign Up'),
                           style: ButtonStyle(
                             backgroundColor:
                                 MaterialStateProperty.all(Colors.black),

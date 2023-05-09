@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coolie/coolie/accepted.dart';
 import 'package:coolie/coolie/coolie_login.dart';
+import 'package:coolie/global.dart';
 import 'package:coolie/user/Sidebar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,14 @@ class _coolie_homeState extends State<coolie_home> {
         .where('status', isEqualTo: 'pending')
         .snapshots();
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  bool? loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +68,11 @@ class _coolie_homeState extends State<coolie_home> {
                   if (!snapshot.hasData) return Container();
 
                   if (snapshot.hasError) {
-                    return Text('Something went wrong');
+                    return TranslatedText('Something went wrong');
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text('Loading');
+                    return TranslatedText('Loading');
                   }
 
                   return ListView(
@@ -70,9 +80,65 @@ class _coolie_homeState extends State<coolie_home> {
                         snapshot.data!.docs.map((DocumentSnapshot document) {
                       Map<String, dynamic> data =
                           document.data() as Map<String, dynamic>;
-                      return ListTile(
-                        title: Text(data['fair']),
-                        subtitle: Text(data['status']),
+                      if (data['status'] == 'accepted') {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => CoolieAccepted(
+                                  id: document.id,
+                                )));
+                        return Container();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ListTile(
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TranslatedText('Fair(Rs.) :${data['fair']}'),
+                              StreamBuilder(
+                                  stream: FirebaseFirestore.instance
+                                      .collection('users')
+                                      .where('uid', isEqualTo: data['userId'])
+                                      .snapshots(),
+                                  builder: (context, snaps) {
+                                    if (!snaps.hasData) return Container();
+                                    var map = snaps.data!.docs.first
+                                        as DocumentSnapshot;
+                                    return Column(
+                                      children: [
+                                        TranslatedText(map['Name']),
+                                        TranslatedText(
+                                            'From : ${destiMaster.map((e) => e).where((element) => element['ID'] == data['pickupAddress']).toList().first['Name'].toString()}'),
+                                        TranslatedText(
+                                            'To : ${destiMaster.map((e) => e).where((element) => element['ID'] == data['destinationAddress']).toList().first['Name'].toString()}'),
+                                      ],
+                                    );
+                                  }),
+                            ],
+                          ),
+                          subtitle: TranslatedText(data['status']),
+                          trailing: ElevatedButton(
+                              onPressed: () async {
+                                setState(() {
+                                  loading = true;
+                                });
+                                await FirebaseFirestore.instance
+                                    .collection('rides')
+                                    .doc(document.id)
+                                    .update({
+                                  'status': 'accepted',
+                                  'coolieId':
+                                      FirebaseAuth.instance.currentUser!.uid
+                                });
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            CoolieAccepted(id: document.id)));
+                                setState(() {
+                                  loading = false;
+                                });
+                              },
+                              child: TranslatedText('Accept')),
+                        ),
                       );
                     }).toList(),
                   );

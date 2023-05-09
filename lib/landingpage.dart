@@ -79,13 +79,13 @@ class _landingpageState extends State<landingpage> {
                         MaterialPageRoute(builder: ((context) => user_home())));
                   }
                 },
-                child: Text('User'),
+                child: TranslatedText('User'),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.black),
                 ),
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 0),
             Container(
               margin: const EdgeInsets.only(top: 0, left: 100, right: 100),
               height: 300,
@@ -117,16 +117,16 @@ class _landingpageState extends State<landingpage> {
                             builder: ((context) => coolie_home())));
                   }
                 },
-                child: Text("Coolie"),
+                child: TranslatedText("Coolie"),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(Colors.black),
                 ),
               ),
             ),
             // TextButton(
-            //   child: const Text(
+            //   child: const TranslatedText(
             //     'Change Language',
-            //     style: TextStyle(
+            //       TextStyle(
             //         fontSize: 20,
             //         color: Colors.black,
             //         fontWeight: FontWeight.bold),

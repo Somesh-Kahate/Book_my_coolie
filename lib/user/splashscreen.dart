@@ -1,4 +1,5 @@
 import 'package:coolie/landingpage.dart';
+import 'package:coolie/lang.dart';
 import 'package:coolie/user/login.dart';
 import 'package:coolie/user/user(home).dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,7 +19,7 @@ class _SplashState extends State<Splash> {
 
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: ((context) => landingpage())));
+          context, MaterialPageRoute(builder: ((context) => languageSelect())));
     });
   }
 

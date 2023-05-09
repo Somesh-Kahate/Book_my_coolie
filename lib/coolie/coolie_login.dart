@@ -1,6 +1,7 @@
 import 'package:coolie/coolie/coolie(home).dart';
 import 'package:coolie/coolie/coolie_reg.dart';
 import 'package:coolie/coolie/forget_pass.dart';
+import 'package:coolie/global.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -60,9 +61,9 @@ class _coolie_loginState extends State<coolie_login> {
           Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.all(10),
-            child: const Text(
+            child: TranslatedText(
               'User Login',
-              style: TextStyle(
+              TextStyle(
                   fontSize: 40,
                   fontFamily: 'Satisfy',
                   fontWeight: FontWeight.bold),
@@ -96,9 +97,9 @@ class _coolie_loginState extends State<coolie_login> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => forget_pass()));
             },
-            child: const Text(
+            child:  TranslatedText(
               'Forgot Password',
-              style: TextStyle(color: Colors.black),
+              TextStyle(color: Colors.black),
             ),
           ),
           Container(
@@ -120,16 +121,16 @@ class _coolie_loginState extends State<coolie_login> {
                   print(e);
                 }
               },
-              child: const Text('Login'),
+              child:  TranslatedText('Login'),
             ),
           ),
           Row(
             children: <Widget>[
-              const Text('Does not have account?'),
+               TranslatedText('Does not have account?'),
               TextButton(
-                child: const Text(
+                child:  TranslatedText(
                   'Sign up',
-                  style: TextStyle(
+                  TextStyle(
                       fontSize: 20,
                       color: Colors.black,
                       fontWeight: FontWeight.bold),

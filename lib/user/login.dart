@@ -1,3 +1,4 @@
+import 'package:coolie/global.dart';
 import 'package:coolie/user/User_registration.dart';
 import 'package:coolie/user/u_forget_pass.dart';
 import 'package:coolie/user/user(home).dart';
@@ -60,9 +61,9 @@ class _LoginState extends State<Login> {
           Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.all(10),
-            child: const Text(
+            child: TranslatedText(
               'User Login',
-              style: TextStyle(
+              TextStyle(
                   fontSize: 40,
                   fontFamily: 'Satisfy',
                   fontWeight: FontWeight.bold),
@@ -96,16 +97,16 @@ class _LoginState extends State<Login> {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => u_forget_pass()));
             },
-            child: const Text(
+            child:  TranslatedText(
               'Forgot Password',
-              style: TextStyle(color: Colors.black),
+              TextStyle(color: Colors.black),
             ),
           ),
           Container(
             height: 50,
-            padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+            padding:  EdgeInsets.fromLTRB(10, 0, 10, 0),
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
+              style:ElevatedButton.styleFrom(
                   backgroundColor: Colors.black, foregroundColor: Colors.white),
               onPressed: () {
                 try {
@@ -115,21 +116,21 @@ class _LoginState extends State<Login> {
                           password: _passwordController.text.trim())
                       .then((value) => Navigator.of(context).pushReplacement(
                           MaterialPageRoute(
-                              builder: (context) => user_home())));  
+                              builder: (context) => user_home())));
                 } catch (e) {
                   print(e);
                 }
               },
-              child: const Text('Login'),
+              child: TranslatedText('Login'),
             ),
           ),
           Row(
             children: <Widget>[
-              const Text('Does not have account?'),
+               TranslatedText('Does not have account?'),
               TextButton(
-                child: const Text(
+                child:  TranslatedText(
                   'Sign up',
-                  style: TextStyle(
+                  TextStyle(
                       fontSize: 20,
                       color: Colors.black,
                       fontWeight: FontWeight.bold),

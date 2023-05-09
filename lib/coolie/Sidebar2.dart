@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:coolie/coolie/coolie_login.dart';
+import 'package:coolie/global.dart';
 import 'package:coolie/user/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -59,25 +60,25 @@ class _SideBarScreenState extends State<SideBarScreen> {
           backgroundColor: Color.fromARGB(255, 249, 249, 249),
           child: ListView(
             children: [
-              const ListTile(
+              ListTile(
                 leading: CircleAvatar(
                   backgroundImage: NetworkImage(
                       "https://w7.pngwing.com/pngs/741/68/png-transparent-user-computer-icons-user-miscellaneous-cdr-rectangle-thumbnail.png"),
                 ),
-                title: Text(
+                title: TranslatedText(
                   "NNNNN",
-                  style: TextStyle(color: Colors.black),
+                  TextStyle(color: Colors.black),
                 ),
-                subtitle: Text(
+                subtitle: TranslatedText(
                   "nnnnn@gmail.com",
-                  style: TextStyle(color: Colors.black),
+                  TextStyle(color: Colors.black),
                 ),
               ),
               ...drawerMenuListname.map((sideMenuData) {
                 return ListTile(
                   leading: sideMenuData['leading'],
-                  title: Text(
-                    // style: TextStyle(color: Colors.white),
+                  title: TranslatedText(
+                    //   TextStyle(color: Colors.white),
                     sideMenuData['title'],
                   ),
                   trailing: sideMenuData['trailing'],

@@ -2,12 +2,14 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coolie/global.dart';
+import 'package:coolie/payed.dart';
 import 'package:coolie/user/Sidebar.dart';
 import 'package:coolie/user/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:snippet_coder_utils/FormHelper.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class user_home extends StatefulWidget {
   const user_home({super.key});
@@ -210,6 +212,7 @@ class _user_homeState extends State<user_home> {
               //           MaterialPageRoute(builder: (context) => Login()));
               //     },
               //     icon: Icon(Icons.logout)),
+
               Image.asset(
                 'Assets/logo.jpg',
                 fit: BoxFit.contain,
@@ -220,302 +223,443 @@ class _user_homeState extends State<user_home> {
             ],
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              FormHelper.dropDownWidgetWithLabel(
-                  context,
-                  "station",
-                  "Enter Station",
-                  this.stationId,
-                  this.stations, (onChangedVal) {
-                this.stationId = onChangedVal;
-                print("Selected Station : $onChangedVal");
-                setState(() {
-                  this.desti = this
-                      .destiMaster
-                      .where(
-                        (stateItem) =>
-                            stateItem["ParentId"].toString() ==
-                            onChangedVal.toString(),
-                      )
-                      .toList();
-                });
-                this.destiID = null;
-                setState(() {
-                  this.trains = this
-                      .trainMaster
-                      .where(
-                        (stateItem) =>
-                            stateItem["Parentid"].toString() ==
-                            onChangedVal.toString(),
-                      )
-                      .toList();
-                });
-                this.trainID = null;
-              }, (onValidateval) {
-                if (onValidateval == null) {
-                  return "Please select your station";
+        body: StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('rides')
+                .where('userId',
+                    isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                .where('status', whereIn: ['pending', 'accepted', 'delivered'])
+                .orderBy('timestamp', descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return Container();
+              print(FirebaseAuth.instance.currentUser!.uid);
+
+              //if (map['status'] == 'pending') return Column();
+              if (snapshot.data!.docs.length == 0) {
+                return Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      FormHelper.dropDownWidgetWithLabel(
+                          context,
+                          "station",
+                          "Enter Station",
+                          this.stationId,
+                          this.stations, (onChangedVal) {
+                        this.stationId = onChangedVal;
+                        print("Selected Station : $onChangedVal");
+                        setState(() {
+                          this.desti = this
+                              .destiMaster
+                              .where(
+                                (stateItem) =>
+                                    stateItem["ParentId"].toString() ==
+                                    onChangedVal.toString(),
+                              )
+                              .toList();
+                        });
+                        this.destiID = null;
+                        setState(() {
+                          this.trains = this
+                              .trainMaster
+                              .where(
+                                (stateItem) =>
+                                    stateItem["Parentid"].toString() ==
+                                    onChangedVal.toString(),
+                              )
+                              .toList();
+                        });
+                        this.trainID = null;
+                      }, (onValidateval) {
+                        if (onValidateval == null) {
+                          return "Please select your station";
+                        }
+                        return null;
+                      },
+                          borderColor: Theme.of(context).primaryColorDark,
+                          borderFocusColor: Theme.of(context).primaryColorLight,
+                          borderRadius: 10,
+                          optionValue: "val",
+                          optionLabel: "name"),
+                      FormHelper.dropDownWidgetWithLabel(
+                        context,
+                        "Boarding point",
+                        " Select Boarding Point",
+                        this.destiID,
+                        this.desti,
+                        (onChangedVal1) {
+                          this.destiID = onChangedVal1;
+                          setState(() {});
+
+                          print("Selected Boarding point : $onChangedVal1");
+                        },
+                        (onValidateval) {
+                          if (onValidateval == null) {
+                            return "Please select your desired location";
+                          }
+                          return null;
+                        },
+                        borderColor: Theme.of(context).primaryColorDark,
+                        borderFocusColor: Theme.of(context).primaryColorDark,
+                        borderRadius: 10,
+                        optionValue: "ID",
+                        optionLabel: "Name",
+                      ),
+                      FormHelper.dropDownWidgetWithLabel(
+                        context,
+                        "Dropping point",
+                        "Select dropping Point",
+                        this.dropID,
+                        this.desti,
+                        (onChangedVal2) {
+                          print(onChangedVal2.runtimeType);
+
+                          this.dropID = onChangedVal2;
+                          setState(() {});
+                          // setState(() {
+                          //   drop = int.parse(onChangedVal);
+                          // });
+                          print(
+                              "Selected Dropping point : $onChangedVal2   $dropID");
+                        },
+                        (onValidateval) {
+                          if (onValidateval == null) {
+                            return "Please select your desired location";
+                          }
+                          return null;
+                        },
+                        borderColor: Theme.of(context).primaryColorDark,
+                        borderFocusColor: Theme.of(context).primaryColorDark,
+                        borderRadius: 10,
+                        optionValue: "ID",
+                        optionLabel: "Name",
+                      ),
+                      FormHelper.dropDownWidgetWithLabel(
+                        context,
+                        "Trains",
+                        "Select train",
+                        this.trainID,
+                        this.trains,
+                        (onChangedVal) {
+                          this.trainID = onChangedVal;
+                          print("Selected train : $onChangedVal");
+                        },
+                        (onValidateval) {
+                          if (onValidateval == null) {
+                            return "Please select your train";
+                          }
+                          return null;
+                        },
+                        borderColor: Theme.of(context).primaryColorDark,
+                        borderFocusColor: Theme.of(context).primaryColorDark,
+                        borderRadius: 10,
+                        optionValue: "num",
+                        optionLabel: "label",
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width / 2.2,
+                            padding: const EdgeInsets.all(10),
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Enter Coach Number',
+                                prefixIcon: Icon(Icons.confirmation_number),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 2.2,
+                            padding: const EdgeInsets.all(10),
+                            child: TextField(
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Enter seat number',
+                                prefixIcon: Icon(Icons.confirmation_number),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          TranslatedText(
+                            "    Select No. of bags         ",
+                            TextStyle(fontSize: 20),
+                          ),
+                          DropdownButton(
+                            value: dropdownvalue,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            items: items.map((String value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: TranslatedText(value.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownvalue = newValue ?? "1";
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      TranslatedText(
+                          "Select approximate weight ( in kg ) of atleast 4 bags",
+                          TextStyle(fontSize: 16)),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          TranslatedText("Bag 1", TextStyle(fontSize: 14)),
+                          TranslatedText("Bag 2", TextStyle(fontSize: 14)),
+                          TranslatedText("Bag 3", TextStyle(fontSize: 14)),
+                          TranslatedText("Bag 4", TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                      SizedBox(height: 2),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          DropdownButton(
+                            value: bag1Weight,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            items: bagWeights.map((String value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: TranslatedText(value.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                bag1Weight = newValue ?? "1";
+                              });
+                            },
+                          ),
+                          DropdownButton(
+                            value: bag2Weight,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            items: bagWeights.map((String value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: TranslatedText(value.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                bag2Weight = newValue ?? "1";
+                              });
+                            },
+                          ),
+                          DropdownButton(
+                            value: bag3Weight,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            items: bagWeights.map((String value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: TranslatedText(value.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                bag3Weight = newValue ?? "1";
+                              });
+                            },
+                          ),
+                          DropdownButton(
+                            value: bag4Weight,
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                            items: bagWeights.map((String value) {
+                              return DropdownMenuItem(
+                                value: value,
+                                child: TranslatedText(value.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                bag4Weight = newValue ?? "1";
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      TranslatedText(
+                          "Expected Estimate: ${((costData) * (int.parse(destiID ?? "1") - int.parse(dropID ?? "1")).abs() + int.parse(dropdownvalue) * 20) - costData} "),
+                      TranslatedText(
+                          "print: ${int.parse(bag1Weight ?? "1") + int.parse(bag2Weight ?? "1") + int.parse(bag3Weight ?? "1") + int.parse(bag4Weight ?? "1")}"),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.black,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 15),
+                              textStyle: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          onPressed: () async {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            //await Future.delayed(const Duration(seconds: 20));
+                            final currentUser =
+                                FirebaseAuth.instance.currentUser;
+                            await FirebaseFirestore.instance
+                                .collection('rides')
+                                .add({
+                              'pickupAddress': int.parse(this.destiID!),
+                              'destinationAddress': int.parse(this.dropID!),
+                              'fair':
+                                  "${((costData) * (int.parse(destiID ?? "1") - int.parse(dropID ?? "1")).abs() + int.parse(dropdownvalue) * 20) - costData}",
+                              'status': 'pending',
+                              'userId': currentUser!.uid,
+                              'timestamp': FieldValue.serverTimestamp()
+                            });
+                            setState(() {
+                              isLoading = false;
+                            });
+                          },
+                          child: (isLoading)
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 1.5,
+                                  ))
+                              : TranslatedText("Book Coolie")),
+                    ],
+                  ),
+                );
+              } else {
+                var map = snapshot.data!.docs.first as DocumentSnapshot;
+                if (map['status'] == 'paid') {
+                  return MyWidget();
                 }
-                return null;
-              },
-                  borderColor: Theme.of(context).primaryColorDark,
-                  borderFocusColor: Theme.of(context).primaryColorLight,
-                  borderRadius: 10,
-                  optionValue: "val",
-                  optionLabel: "name"),
-              FormHelper.dropDownWidgetWithLabel(
-                context,
-                "Boarding point",
-                " Select Boarding Point",
-                this.destiID,
-                this.desti,
-                (onChangedVal1) {
-                  this.destiID = onChangedVal1;
-                  setState(() {});
-
-                  print("Selected Boarding point : $onChangedVal1");
-                },
-                (onValidateval) {
-                  if (onValidateval == null) {
-                    return "Please select your desired location";
-                  }
-                  return null;
-                },
-                borderColor: Theme.of(context).primaryColorDark,
-                borderFocusColor: Theme.of(context).primaryColorDark,
-                borderRadius: 10,
-                optionValue: "ID",
-                optionLabel: "Name",
-              ),
-              FormHelper.dropDownWidgetWithLabel(
-                context,
-                "Dropping point",
-                "Select dropping Point",
-                this.dropID,
-                this.desti,
-                (onChangedVal2) {
-                  print(onChangedVal2.runtimeType);
-
-                  this.dropID = onChangedVal2;
-                  setState(() {});
-                  // setState(() {
-                  //   drop = int.parse(onChangedVal);
-                  // });
-                  print("Selected Dropping point : $onChangedVal2   $dropID");
-                },
-                (onValidateval) {
-                  if (onValidateval == null) {
-                    return "Please select your desired location";
-                  }
-                  return null;
-                },
-                borderColor: Theme.of(context).primaryColorDark,
-                borderFocusColor: Theme.of(context).primaryColorDark,
-                borderRadius: 10,
-                optionValue: "ID",
-                optionLabel: "Name",
-              ),
-              FormHelper.dropDownWidgetWithLabel(
-                context,
-                "Trains",
-                "Select train",
-                this.trainID,
-                this.trains,
-                (onChangedVal) {
-                  this.trainID = onChangedVal;
-                  print("Selected train : $onChangedVal");
-                },
-                (onValidateval) {
-                  if (onValidateval == null) {
-                    return "Please select your train";
-                  }
-                  return null;
-                },
-                borderColor: Theme.of(context).primaryColorDark,
-                borderFocusColor: Theme.of(context).primaryColorDark,
-                borderRadius: 10,
-                optionValue: "num",
-                optionLabel: "label",
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2.2,
-                    padding: const EdgeInsets.all(10),
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Enter Coach Number',
-                        prefixIcon: Icon(Icons.confirmation_number),
-                      ),
+                if (map['status'] == 'delivered') {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        TranslatedText('Redirecting to payment..'),
+                      ],
                     ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2.2,
-                    padding: const EdgeInsets.all(10),
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Enter seat number',
-                        prefixIcon: Icon(Icons.confirmation_number),
-                      ),
+                  );
+                }
+                if (map['status'] == 'accepted') {
+                  return Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.check,
+                          color: Colors.green,
+                        ),
+                        TranslatedText('Coolie has accepted your request'),
+                        StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection('coolie')
+                                .where('uid', isEqualTo: map['coolieId'])
+                                .snapshots(),
+                            builder: (context, snaps) {
+                              if (!snaps.hasData) return Container();
+                              var cooliemap =
+                                  snaps.data!.docs.first as DocumentSnapshot;
+                              return Column(
+                                children: [
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                2,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                TranslatedText(
+                                                    cooliemap['Name']),
+                                                TranslatedText(
+                                                    cooliemap['station']),
+                                                //TranslatedText(cooliemap['Mobile']),
+                                              ],
+                                            )),
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              final url = Uri.parse(
+                                                  "tel:${cooliemap['Mobile']}");
+                                              launchUrl(url);
+                                            },
+                                            child: TranslatedText('Call'))
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              );
+                            }),
+                        TranslatedText(
+                            'From : ${destiMaster.map((e) => e).where((element) => element['ID'] == map['pickupAddress']).toList().first['Name'].toString()}'),
+                        TranslatedText(
+                            'To : ${destiMaster.map((e) => e).where((element) => element['ID'] == map['destinationAddress']).toList().first['Name'].toString()}'),
+                        TranslatedText('Your fair(Rs.) : ${map['fair']}'),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TranslatedText(
+                                  'Has Coolie completed the delivery? '),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    FirebaseFirestore.instance
+                                        .collection('rides')
+                                        .doc(map.id)
+                                        .update({'status': 'delivered'});
+                                  },
+                                  child: TranslatedText('Yes'))
+                            ],
+                          ),
+                        )
+                      ],
                     ),
+                  );
+                }
+                return Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircularProgressIndicator(),
+                      TranslatedText(
+                          'Waiting for coolie to accept the request'),
+                      TranslatedText(
+                          'From : ${destiMaster.map((e) => e).where((element) => element['ID'] == map['pickupAddress']).toList().first['Name'].toString()}'),
+                      TranslatedText(
+                          'To : ${destiMaster.map((e) => e).where((element) => element['ID'] == map['destinationAddress']).toList().first['Name'].toString()}'),
+                      TranslatedText('Your fair(Rs.) : ${map['fair']}')
+                    ],
                   ),
-                ],
-              ),
-              SizedBox(height: 5),
-              Row(
-                children: [
-                  Text(
-                    "    Select No. of bags         ",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  DropdownButton(
-                    value: dropdownvalue,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: items.map((String value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownvalue = newValue ?? "1";
-                      });
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Text("Select approximate weight ( in kg ) of atleast 4 bags",
-                  style: TextStyle(fontSize: 16)),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text("Bag 1", style: TextStyle(fontSize: 14)),
-                  Text("Bag 2", style: TextStyle(fontSize: 14)),
-                  Text("Bag 3", style: TextStyle(fontSize: 14)),
-                  Text("Bag 4", style: TextStyle(fontSize: 14)),
-                ],
-              ),
-              SizedBox(height: 2),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  DropdownButton(
-                    value: bag1Weight,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: bagWeights.map((String value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        bag1Weight = newValue ?? "1";
-                      });
-                    },
-                  ),
-                  DropdownButton(
-                    value: bag2Weight,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: bagWeights.map((String value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        bag2Weight = newValue ?? "1";
-                      });
-                    },
-                  ),
-                  DropdownButton(
-                    value: bag3Weight,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: bagWeights.map((String value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        bag3Weight = newValue ?? "1";
-                      });
-                    },
-                  ),
-                  DropdownButton(
-                    value: bag4Weight,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: bagWeights.map((String value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        bag4Weight = newValue ?? "1";
-                      });
-                    },
-                  ),
-                ],
-              ),
-              Text(
-                  "Expected Estimate: ${((costData) * (int.parse(destiID ?? "1") - int.parse(dropID ?? "1")).abs() + int.parse(dropdownvalue) * 20) - costData} "),
-              Text(
-                  "print: ${int.parse(bag1Weight ?? "1") + int.parse(bag2Weight ?? "1") + int.parse(bag3Weight ?? "1") + int.parse(bag4Weight ?? "1")}"),
-              SizedBox(height: 20),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                      textStyle:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  onPressed: () async {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    //await Future.delayed(const Duration(seconds: 20));
-                    final currentUser = FirebaseAuth.instance.currentUser;
-                    await FirebaseFirestore.instance.collection('rides').add({
-                      'pickupAddress': int.parse(this.destiID!),
-                      'destinationAddress': int.parse(this.dropID!),
-                      'fair':
-                          "${((costData) * (int.parse(destiID ?? "1") - int.parse(dropID ?? "1")).abs() + int.parse(dropdownvalue) * 20) - costData}",
-                      'status': 'pending',
-                      'userId': currentUser!.uid,
-                    });
-                    setState(() {
-                      isLoading = false;
-                    });
-                  },
-                  child: (isLoading)
-                      ? const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 1.5,
-                          ))
-                      : const Text("Book Coolie")),
-            ],
-          ),
-        ),
+                );
+              }
+            }),
       ),
     );
   }
