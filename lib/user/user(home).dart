@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coolie/global.dart';
 import 'package:coolie/payed.dart';
+import 'package:coolie/payment/backend.dart';
 import 'package:coolie/user/Sidebar.dart';
 import 'package:coolie/user/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -243,7 +244,7 @@ class _user_homeState extends State<user_home> {
                     children: [
                       FormHelper.dropDownWidgetWithLabel(
                           context,
-                          "station",
+                          "Station",
                           "Enter Station",
                           this.stationId,
                           this.stations, (onChangedVal) {
@@ -545,17 +546,29 @@ class _user_homeState extends State<user_home> {
                   return MyWidget();
                 }
                 if (map['status'] == 'delivered') {
+                  //pay(context, map['fair'], map.id);
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CircularProgressIndicator(),
-                        TranslatedText('Redirecting to payment..'),
+                        TranslatedText('Payment Pending..'),
+                        ElevatedButton(
+                            onPressed: () {
+                              FirebaseFirestore.instance
+                                  .collection('rides')
+                                  .doc(map.id)
+                                  .update({'status': 'delivered'});
+                              pay(context, map['fair'], map.id);
+                            },
+                            child: TranslatedText('Pay'))
                       ],
                     ),
                   );
                 }
-                if (map['status'] == 'accepted') {
+                if (map['status'] == 'accepted' ||
+                    (map['status'] == 'delivered' &&
+                        map['paymentStatus'] == 'CREATED')) {
                   return Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: Column(
@@ -633,6 +646,7 @@ class _user_homeState extends State<user_home> {
                                         .collection('rides')
                                         .doc(map.id)
                                         .update({'status': 'delivered'});
+                                    pay(context, map['fair'], map.id);
                                   },
                                   child: TranslatedText('Yes'))
                             ],

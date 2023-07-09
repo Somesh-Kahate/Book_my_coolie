@@ -73,7 +73,12 @@ class _CoolieAcceptedState extends State<CoolieAccepted> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          TranslatedText(map['Name']),
+                                          TranslatedText(
+                                            map['Name'],
+                                            TextStyle(
+                                              fontSize: 16,
+                                            ),
+                                          ),
                                           //TranslatedText(cooliemap['Mobile']),
                                         ],
                                       )),

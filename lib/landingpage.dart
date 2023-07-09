@@ -1,3 +1,5 @@
+import 'package:coolie/admin/admin_home.dart';
+import 'package:coolie/admin/admin_login.dart';
 import 'package:coolie/coolie/coolie(home).dart';
 import 'package:coolie/coolie/coolie_login.dart';
 import 'package:coolie/coolie/coolie_reg.dart';
@@ -46,6 +48,18 @@ class _landingpageState extends State<landingpage> {
             Container(padding: const EdgeInsets.all(0.0))
           ],
         ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: ((context) => AdminLogin())));
+            },
+            child: TranslatedText('Admin'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all(Colors.black),
+            ),
+          ),
+        ],
       ),
       body: Container(
         child: Column(

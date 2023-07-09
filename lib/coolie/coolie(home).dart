@@ -61,8 +61,10 @@ class _coolie_homeState extends State<coolie_home> {
           children: [
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream:
-                    FirebaseFirestore.instance.collection('rides').snapshots(),
+                stream: FirebaseFirestore.instance
+                    .collection('rides')
+                    .orderBy('timestamp', descending: false)
+                    .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData) return Container();

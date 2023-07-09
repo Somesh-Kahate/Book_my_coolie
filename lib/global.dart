@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:translator/translator.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 String langCode = 'en';
 Future<String> translate(String translateText) async {
   var data = await translator.translate(translateText, to: langCode);
@@ -58,3 +62,24 @@ List<Map<String, dynamic>> destiMaster = [
   {"ID": 2, "Name": "Platform 1", "ParentId": 5},
   {"ID": 3, "Name": "Platform 2", "ParentId": 5},
 ];
+
+TextEditingController message = TextEditingController();
+
+double getHeight(BuildContext context) {
+  return MediaQuery.of(context).size.height;
+}
+
+double getWidth(BuildContext context) {
+  return MediaQuery.of(context).size.width;
+}
+
+void showToast(String? str) {
+  Fluttertoast.showToast(
+      msg: str!,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.grey.shade100,
+      textColor: Colors.black.withOpacity(0.9),
+      fontSize: 16.0);
+}
